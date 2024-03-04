@@ -81,7 +81,6 @@ export async function addBlog(req, res) {
 }
 
 
-
 //get blogs
 
 export async function getBlog (req , res) {
@@ -134,9 +133,10 @@ export async function EditBlogDetails(req, res) {
     const uploadBlogToCloudinary = async (file) => {
       if (file) {
         const uploadedBlogContent = await cloudinary.uploader.upload(file, {
-          folder: "ortmor", // Setting folder to upload
+          folder: "ortmor", 
           resource_type: "raw",
         });
+        console.log(uploadedBlogContent,"uploaded file");
         return uploadedBlogContent.url || "";
       }
       return "";
