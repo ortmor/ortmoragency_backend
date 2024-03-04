@@ -18,7 +18,7 @@ export function sendBlogNotification  (email , message ){
             to: email,
             subject: "Ortmor Agency Blog Added ",
             html: `
-            <h4>   A new  Course (${message?.blog}) has been added . Please see the Admin Panel for more details. </h4>
+            <h4>   A new  Blog (${message?.blog}) has been added . Please see the Admin Panel for more details. </h4>
           
             `,
           }

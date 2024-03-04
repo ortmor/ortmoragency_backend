@@ -1,7 +1,7 @@
 import moment from "moment/moment.js";
 import { sendBlogNotification } from "../Helpers/newBlogAddedMail.js";
 import Blog from "../model/blogModel.js";
-
+import cloudinary from "../config/cloudinary.js";
 
 //add blogs
 
@@ -32,46 +32,36 @@ export async function addBlog(req, res) {
       return;
     }
 
-    // upload each blog to cloudinary
-    const uploadBlogToCloudinary = async (blogContent) => {
-      if (blogContent) {
-        const uploadedBlog = await cloudinary.uploader.upload(blogContent, {
-          folder: "ortmor", // setting folder to upload
+    // Upload each blog content to Cloudinary
+    const uploadBlogToCloudinary = async (file) => {
+      if (file) {
+        const uploadedBlogContent = await cloudinary.uploader.upload(file, {
+          folder: "ortmor", // Setting folder to upload
           resource_type: "raw",
         });
-        return uploadedBlog.secure_url || "";
+        return uploadedBlogContent.url || "";
       }
-      return ;
+      return "";
     };
 
-    // Update content for adding blog into Cloudinary
-    const updatedContent = await Promise.all(
-      content.map(async (blog) => {
-        const uploadedBlogContent = await uploadBlogToCloudinary(blog.content);
-        return {
-          blog: uploadedBlogContent,
-        };
-      })
-    );
+    // Upload image to Cloudinary
+    const uploadedImageUrl = await uploadBlogToCloudinary(req.files.image[0].path);
 
-    req.files.image[0].path = req.files.image[0].path.substring("public".length);
     const formattedDate = moment(date, "DD-MM-YYYY").toDate();
 
-    const blogInstance = new Blog({
+    const blog = new Blog({
       title,
       shortDescription,
       metaTitle,
       metaDescription,
       metaTag,
       slug,
-      date:formattedDate,
-      image: req.files.image[0].path,
+      date: formattedDate,
+      image: uploadedImageUrl, // Use uploaded image URL here
       content,
     });
 
-    await blogInstance.save();
-
-  
+    await blog.save();
 
 
     // Creating a message object for sending email messages
@@ -89,6 +79,8 @@ export async function addBlog(req, res) {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 }
+
+
 
 //get blogs
 
@@ -130,60 +122,58 @@ export async function deleteBlog (req , res) {
 
 
 // Edit blog Details
-export async function EditBlogDetails (req , res) {
+const uploadBlogToCloudinary = async (file) => {
+  if (file) {
+    const uploadedBlogContent = await cloudinary.uploader.upload(file, {
+      folder: "ortmor", // Setting folder to upload
+      resource_type: "raw",
+    });
+    return uploadedBlogContent.url || "";
+  }
+  return "";
+};
+
+export async function EditBlogDetails(req, res) {
   try {
-
     //find blog based on blog id 
-    const blog = await Blog.findOne({ _id : req.body.blogId })
-
+    const blog = await Blog.findOne({ _id: req.body.blogId });
+    console.log(blog, "blogg");
     if (!blog) {
       return res.status(404).json({ status: false, message: "blog not found" });
     }
-   
-    // Handling blog thumbnail image
+  
     let image;
-    if(req.files?.image) {
-      req.files.image[0].path = req.files.image[0].path.substring('public'.length);
-      image = req.files.image[0] ;
-    }else {
-      image = blog.image ;
+    if (req.files?.image) {
+      req.files.image[0].path = req.files.image[0].path.substring("public".length);
+      const uploadedImageUrl = await uploadBlogToCloudinary(req.files.image[0].path);
+      image = uploadedImageUrl;
+     
+    } else {
+      image = blog.image;
     }
 
+    const formattedDate = moment(req.body.date, "DD-MM-YYYY").toDate();
 
-
-
-     // upload each Assignment to cloudinary
-     const uploadBlogToCloudinary = async (blogContent) => {
-      if (blogContent) {
-        const uploadedBlog = await cloudinary.uploader.upload(blogContent, {
-          folder: "ortmor", // setting folder to upload
-          resource_type: "raw",
-        });
-        return uploadedBlog.secure_url || "";
-      }
-      return uploadBlogToCloudinary;
-    };
-
-    
-
-      Blog.updateOne({ _id : req.body.blogId  } , {
-        $set : {
-          title : req.body.title,
+    Blog.updateOne(
+      { _id: req.body.blogId },
+      {
+        $set: {
+          title: req.body.title,
           shortDescription: req.body.shortDescription,
           metaTitle: req.body.metaTitle,
-          metaDescription : req.body.metaDescription,
+          metaDescription: req.body.metaDescription,
           metaTag: req.body.metaTag,
-          slug : req.body.slug ,
-          content:req.body.content ,
-          image:req.files.image[0]  ,
-      
-        }
-      }).then((response) => {
-        res.status(200).json({ status : true , message : " Blog updated Successfully" })
-      })
-    
+          slug: req.body.slug,
+          date: formattedDate,
+          content: req.body.content,
+          image,
+        },
+      }
+    ).then((response) => {
+      res.status(200).json({ status: true, message: " Blog updated Successfully" });
+    });
   } catch (error) {
     console.log(error);
-    res.json({ status : true , message : "Internal server Error "})
+    res.json({ status: true, message: "Internal server Error " });
   }
 }
