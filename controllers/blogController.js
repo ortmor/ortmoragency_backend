@@ -122,7 +122,6 @@ export async function deleteBlog (req , res) {
 
 // Edit blog Details
 
-
 export async function EditBlogDetails(req, res) {
   try {
     //find blog based on blog id 
@@ -132,6 +131,7 @@ export async function EditBlogDetails(req, res) {
     }
     const uploadBlogToCloudinary = async (file) => {
       if (file) {
+        console.log(file,"filesss");
         const uploadedBlogContent = await cloudinary.uploader.upload(file, {
           folder: "ortmor", 
           resource_type: "raw",
