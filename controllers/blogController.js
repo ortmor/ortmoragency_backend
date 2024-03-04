@@ -122,32 +122,32 @@ export async function deleteBlog (req , res) {
 
 
 // Edit blog Details
-const uploadBlogToCloudinary = async (file) => {
-  if (file) {
-    const uploadedBlogContent = await cloudinary.uploader.upload(file, {
-      folder: "ortmor", // Setting folder to upload
-      resource_type: "raw",
-    });
-    return uploadedBlogContent.url || "";
-  }
-  return "";
-};
+
 
 export async function EditBlogDetails(req, res) {
   try {
     //find blog based on blog id 
     const blog = await Blog.findOne({ _id: req.body.blogId });
-    console.log(blog, "blogg");
     if (!blog) {
       return res.status(404).json({ status: false, message: "blog not found" });
     }
-  
+    const uploadBlogToCloudinary = async (file) => {
+      if (file) {
+        const uploadedBlogContent = await cloudinary.uploader.upload(file, {
+          folder: "ortmor", // Setting folder to upload
+          resource_type: "raw",
+        });
+        return uploadedBlogContent.url || "";
+      }
+      return "";
+    };
     let image;
-    if (req.files?.image) {
+    if (req.files?.image && req.files.image[0].path) {
       req.files.image[0].path = req.files.image[0].path.substring("public".length);
       const uploadedImageUrl = await uploadBlogToCloudinary(req.files.image[0].path);
-      image = uploadedImageUrl;
-     
+      if (uploadedImageUrl) {
+        image = uploadedImageUrl;
+      }
     } else {
       image = blog.image;
     }
