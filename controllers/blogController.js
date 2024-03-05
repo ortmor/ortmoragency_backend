@@ -124,26 +124,24 @@ export async function deleteBlog (req , res) {
 
 export async function EditBlogDetails(req, res) {
   try {
-    //find blog based on blog id 
     const blog = await Blog.findOne({ _id: req.body.blogId });
     if (!blog) {
-      return res.status(404).json({ status: false, message: "blog not found" });
+      return res.status(404).json({ status: false, message: "Blog not found" });
     }
+
     const uploadBlogToCloudinary = async (file) => {
       if (file) {
-        console.log(file,"filesss");
         const uploadedBlogContent = await cloudinary.uploader.upload(file, {
-          folder: "ortmor", 
+          folder: "ortmor",
           resource_type: "raw",
         });
-        console.log(uploadedBlogContent,"uploaded file");
-        return uploadedBlogContent.url || "";
+        return uploadedBlogContent.secure_url || "";
       }
-      return ""; 
+      return "";
     };
+
     let image;
     if (req.files?.image && req.files.image[0].path) {
-      req.files.image[0].path = req.files.image[0].path.substring("public".length);
       const uploadedImageUrl = await uploadBlogToCloudinary(req.files.image[0].path);
       if (uploadedImageUrl) {
         image = uploadedImageUrl;
@@ -154,7 +152,7 @@ export async function EditBlogDetails(req, res) {
 
     const formattedDate = moment(req.body.date, "DD-MM-YYYY").toDate();
 
-    Blog.updateOne(
+    await Blog.updateOne(
       { _id: req.body.blogId },
       {
         $set: {
@@ -169,11 +167,11 @@ export async function EditBlogDetails(req, res) {
           image,
         },
       }
-    ).then((response) => {
-      res.status(200).json({ status: true, message: " Blog updated Successfully" });
-    });
+    );
+
+    res.status(200).json({ status: true, message: "Blog updated successfully" });
   } catch (error) {
-    console.log(error);
-    res.json({ status: true, message: "Internal server Error " });
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 }
