@@ -2,7 +2,7 @@ import express from "express";
 import {
   generateOtp,
   doSignup,
-  login, getAdminDetails,updateAdminProfile,
+  login, getAdminDetails,updateAdminProfile,updateAdminAvatar,
   forgotPassword,
   chackingOtp,
   changePassword,
@@ -39,8 +39,8 @@ router.post("/change-Password", changePassword);
 // Account
 
 router.get('/get-Account', getAdminDetails)
-router.patch('/update-Profile' , updateAdminProfile)
-// router.patch('/update-avatar' ,verifyUser , uploadImage("./public/images/user") , updateUserAvatar)
+router.patch('/update-Profile' ,updateAdminProfile)
+router.patch('/update-Avatar' , uploadImage("./public/images/admin") , updateAdminAvatar)
 
 
 //For Blog

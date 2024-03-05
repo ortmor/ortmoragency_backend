@@ -88,12 +88,14 @@ export async function login(req, res) {
         .json({ login: false, message: "All fields are required" });
     }
     const admin = await Admin.findOne({ email });
+    console.log(admin);
     if (admin) {
       if (!admin.status) {
         return res.json({ login: false, message: "Sorry, you are banned" });
       }
 
       const validPassword = await bcrypt.compare(password, admin.password);
+      console.log(validPassword);
       if (!validPassword) {
         return res.json({ login: false, message: "Incorrect password" });
       }
@@ -104,7 +106,7 @@ export async function login(req, res) {
         .status(200)
         .json({ admin, token, login: true, message: "Login successfully " });
     } else {
-      res.json({ login: false, message: "Incorrect adminname or password" });
+      res.json({ login: false, message: "Incorrect admin name or password" });
     }
   } catch (error) {
     console.error(error);
@@ -213,12 +215,10 @@ export async function getAdminDetails(req, res) {
 export async function updateAdminProfile(req, res) {
   try {
     const { firstName, lastName } = req.body;
-    console.log(req.body,"+++++");
     const updatedAdmin = await Admin.updateOne(
       { _id: res.adminId },
       { $set: { firstName, lastName } }
     );
-     console.log(updatedAdmin,"admin");
     res
       .status(200)
       .json({ status: true, message: "Profile updated Successfully" });
@@ -227,7 +227,25 @@ export async function updateAdminProfile(req, res) {
   }
 }
 
+export async function updateAdminAvatar (req , res) {
+  try {
+    // updating the image upload path 
+    const image = process.env.BASE_URL + req.files.image[0].path.substring('public'.length);
+    // updating the data 
+    const updateAdmin = await Admin.findByIdAndUpdate(
+      res.adminId,
+      { $set: { picture: image } },
+      { new: true } // This option returns the updated document
+    );
 
+    res.status(200).json({status : true, message : "Profile updated successfully"})
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({status : false, message : "Internal Server Error"})
+  }
+
+}  
 
 
 
