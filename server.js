@@ -3,6 +3,7 @@ import "dotenv/config";
 import morgan from 'morgan';
 import dbConnect from "./config/connection.js";
 import adminRouter from "./routes/adminRouter.js"
+import superAdminRouter from "./routes/superAdminRouter.js"
 import mongoSanitize from 'express-mongo-sanitize' ;
 import xss from 'xss-clean'
 import cookieParser from "cookie-parser";
@@ -32,6 +33,7 @@ app.use(xss());
 dbConnect();
 
 app.use("/admin" , adminRouter)
+app.use("/superAdmin" ,superAdminRouter )
 
 
 // multer Errror
