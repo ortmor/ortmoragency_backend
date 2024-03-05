@@ -2,7 +2,7 @@ import express from "express";
 import {
   generateOtp,
   doSignup,
-  login,
+  login, getAdminDetails,updateAdminProfile,
   forgotPassword,
   chackingOtp,
   changePassword,
@@ -13,7 +13,7 @@ import { loginSchema, signupSchema } from "../Utils/yupSchema.js";
 import validate from "../middleware/validateBody.js";
 import uploadImage from "../middleware/image-upload.js";
 import paginatedResults from "../middleware/pagination.js";
-// import { verifyAdmin } from '../middleware/adminAuth.js';
+import { verifyAdminLogin } from '../middleware/adminAuth.js';
 
 const router = express.Router();
   
@@ -29,12 +29,18 @@ router.post("/login", validate(loginSchema), login);
 // router.post("/auth/login/google" , googleAuth)
 
 // Verifyning the Authorization ;
-// router.use(verifyAdmin)
+router.use(verifyAdminLogin)
 
 // Change Password
-router.post("/forgot-password", forgotPassword);
+router.post("/forgot-Password", forgotPassword);
 router.post("/chacking-Otp", chackingOtp);
 router.post("/change-Password", changePassword);
+
+// Account
+
+router.get('/get-Account', getAdminDetails)
+router.patch('/update-Profile' , updateAdminProfile)
+// router.patch('/update-avatar' ,verifyUser , uploadImage("./public/images/user") , updateUserAvatar)
 
 
 //For Blog

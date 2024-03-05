@@ -190,6 +190,51 @@ export async function login(req, res) {
 // }
 
 
+//Get Admin Account
+
+export async function getAdminDetails(req, res) {
+  try {
+    const adminDetails = await Admin.findById(
+      { _id: res.adminId },
+      { password: 0 }
+    );
+
+    if (!adminDetails) {
+      return res.status(404).json({ status: false, message: "Admin not found" });
+    }
+
+    res.status(200).json({ adminDetails });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: false, message: "Internal server Error" });
+  }
+}
+
+export async function updateAdminProfile(req, res) {
+  try {
+    const { firstName, lastName } = req.body;
+    console.log(req.body,"+++++");
+    const updatedAdmin = await Admin.updateOne(
+      { _id: res.adminId },
+      { $set: { firstName, lastName } }
+    );
+     console.log(updatedAdmin,"admin");
+    res
+      .status(200)
+      .json({ status: true, message: "Profile updated Successfully" });
+  } catch (error) {
+    res.status(500).json({ status: false, message: "Internal server Error" });
+  }
+}
+
+
+
+
+
+
+
+
+
 
 // Forgot password email varification
 export async function forgotPassword(req, res) {
