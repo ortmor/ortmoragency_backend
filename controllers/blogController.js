@@ -139,7 +139,7 @@ export async function EditBlogDetails(req, res) {
         console.log(uploadedBlogContent,"uploaded file");
         return uploadedBlogContent.url || "";
       }
-      return "";
+      return ""; 
     };
     let image;
     if (req.files?.image && req.files.image[0].path) {
