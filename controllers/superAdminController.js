@@ -1,4 +1,6 @@
 import SuperAdminModel from "../model/superAdminModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 
 
@@ -14,44 +16,41 @@ const createToken = (id) => {
   })
 }
 
-
-
 // check admin logged in 
-// export async function authAdmin (req,res) {
-//     try {
-//       const authHeader = req.headers.authorization;
-//     if(authHeader) {
+export async function authAdmin (req,res) {
+    try {
+      const authHeader = req.headers.authorization;
+    if(authHeader) {
   
-//       // seperating bearer and token and taking the token 
-//       const token = authHeader.split(' ')[1];
-//       jwt.verify(token , superAdmin_secret_key , async(err , decoded )=>{
+      // seperating bearer and token and taking the token 
+      const token = authHeader.split(' ')[1];
+      jwt.verify(token , superAdmin_secret_key , async(err , decoded )=>{
       
-//         if(err) {
-//           res.json({ status: false, message: "Unauthorized" })
-//         }else {
-//           // finding the superAdmin with the decoded id
-//           const superAdmin = SuperAdminModel.findById({_id : decoded.id });
-//           if (superAdmin) {
-//             res.json({ status: true, message: "Authorized" });
+        if(err) {
+          res.json({ status: false, message: "Unauthorized" })
+        }else {
+          // finding the superAdmin with the decoded id
+          const superAdmin = SuperAdminModel.findById({_id : decoded.id });
+          if (superAdmin) {
+            res.json({ status: true, message: "Authorized" });
   
-//         } else {
-//             res.json({ status: false, message: "superAdmin not exists" })
+        } else {
+            res.json({ status: false, message: "superAdmin not exists" })
   
-//         }
-//         }
+        }
+        }
   
   
-//       })
-//     }else {
-//       res.json ({ status : false , message : "Admin not exist "})
-//     }
-//     } catch (error) {
-//       res.json({ status: false, message: "Internal Server Error " })
-//     }
+      })
+    }else {
+      res.json ({ status : false , message : "Admin not exist "})
+    }
+    } catch (error) {
+      res.json({ status: false, message: "Internal Server Error " })
+    }
   
-//   }
+  }
   
-
 export async function SuperAdminLogin(req , res) {
 
     const {email , password } = req.body;
@@ -82,8 +81,10 @@ export async function SuperAdminLogin(req , res) {
       res.status(200).json({superAdmin , token , login : true });
   
     } catch (error) {
+        console.log(error);
       res.status(500).json({message: "Internal Server Error"})
     }
   
   
    }
+   
