@@ -1,8 +1,9 @@
 import express from "express";
-import { authAdmin,SuperAdminLogin,getAllAdmin,addAdmin } from "../controllers/superAdminController.js";
+import { authAdmin,SuperAdminLogin,getAllAdmin,addAdmin,blockAdmin,unBlockAdmin } from "../controllers/superAdminController.js";
 import validate from "../middleware/validateBody.js";
 import { loginSchema } from "../Utils/yupSchema.js";
 import paginatedResults from "../middleware/pagination.js";
+import { validateId } from "../middleware/validateParams.js";
 // import { verifySuperAdmin } from "../middleware/superAdminAuth.js";
 
 
@@ -20,6 +21,8 @@ router.post("/login", validate(loginSchema) , SuperAdminLogin);
 // Admin Tutor Management
 router.post("/add-Admin" , addAdmin);
 router.get ("/get-Admin" , paginatedResults() , getAllAdmin);
+router.get("/block-Admin/:id" , validateId ,blockAdmin);
+router.get("/unblock-Admin/:id" ,validateId , unBlockAdmin);
 
 
 export default router;

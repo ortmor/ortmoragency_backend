@@ -1,7 +1,6 @@
 import SuperAdminModel from "../model/superAdminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import cryptoRandomString from "crypto-random-string"
 import Admin from "../model/adminModel.js";
 import { sendNotificationEmail } from "../Helpers/sendEmail.js";
 
@@ -104,8 +103,7 @@ export async function addAdmin(req, res) {
         throw new Error("All fields are mandatory")
       }
     
-    // creating random password for Admin
-    //   const randomPassword = cryptoRandomString({length: 6, type: 'numeric'});
+    // creating  password for Admin
     const hashedPassword = await bcrypt.hash(password, 10);
 
       const admin = await Admin.findOne({
@@ -154,6 +152,38 @@ export async function getAllAdmin(req, res) {
       }
     } catch (error) {
       res.status(500).json({created : false , message:"Internal Server Error" })
+    }
+  }
+
+export async function blockAdmin (req , res){
+    try {
+  
+      // find admin with id and update the status
+      const admin = await Admin.findByIdAndUpdate(req.params.id ,{$set : {status: false}}, {new: true} );
+      if(admin){
+        res.status(200).json({ status : true , message : "Admin Blocked Successfully"})
+      }else {
+        res.status(404).json({ status : false , message : "Something went wrong"})
+      }
+    } catch (error) {
+      res.status(500).json({ status : false , message: "Internal server Error"})
+    }
+  }
+
+ export async function unBlockAdmin (req , res) {
+    try {
+      // find admin with id and update the status
+      const admin = await Admin.findByIdAndUpdate(req.params.id , 
+        {$set : {status : true}} , {new : true} )
+  
+        if(admin){
+          res.status(200).json({ status : true , message : "Admin Unblocked Successfully"})
+        }else{
+          res.status(404).json({status : false , message : "Something went wrong "})
+        }
+  
+    } catch (error) {
+    res.status(500).json({status : false , message : "Internal server error" })    
     }
   }
   
