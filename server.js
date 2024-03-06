@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 app.use(express.static(path.resolve() +"/public"))
-app.use(mongoSanitize());
+app.use(mongoSanitize());  
 
 // DATA SANITIZATION  against site script xss 
 app.use(xss());
