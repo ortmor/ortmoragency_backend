@@ -16,7 +16,7 @@ export function sendBlogNotification  (email , message ){
           var mailOptions={
             from: process.env.EMAIL,
             to: email,
-            subject: "Ortmor Agency Blog Added ",
+            subject: "Ortmor Technology Agency Pvt Ltd Blog Added ",
             html: `
             <h4>   A new  Blog (${message?.blog}) has been added . Please see the Admin Panel for more details. </h4>
           

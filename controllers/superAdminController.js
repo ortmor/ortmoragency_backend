@@ -2,6 +2,7 @@ import SuperAdminModel from "../model/superAdminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Admin from "../model/adminModel.js";
+import { sendNotificationEmail } from "../Helpers/sendEmail.js";
 
 
 
@@ -91,7 +92,59 @@ export async function SuperAdminLogin(req , res) {
 
 
 //ADMIN MNANNAGEMENT
-   
+ 
+export async function addTutor (req, res) { 
+  
+
+    try {
+       const { firstName, lastName, email, phone, about } =  req.body;
+    
+      if(!firstName , !lastName , !email , !phone , !about) {
+        throw new Error("All fields are mandatory")
+      }
+    
+    // creating random password for Admin
+      const randomPassword = cryptoRandomSting({length:6 , type: 'numeric'})
+    
+      const admin = await Admin.findOne({
+        $or:[{email:email} , {phone : phone }]
+      }); 
+    
+    
+      if(admin){
+       return res.json({created:false , message :"admin already exists"});
+      }
+     
+    // create newadmin with random pass
+      const newAdmin = await Admin.create({
+        firstName,
+        lastName,
+        email ,
+        password : randomPassword ,
+        phone , 
+        about
+    
+      })
+    
+      // here send the password to the admin via email 
+        const emailSend = await sendNotificationEmail(email , randomPassword);
+    
+        if(emailSend.status) {
+            res.json({ created : true , message : " Admin Details added successfully"})
+        }
+        else {
+          res.json({created : false ,  message : "Email not send" })
+        }
+    } catch (error) {
+      res.status(500).json("internal server error") ;
+    }
+    
+    }
+    
+    
+    
+
+
 export async function getAllAdmin(req, res) {
   
     try {

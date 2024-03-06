@@ -19,10 +19,10 @@ export function sendVerificationCode (email){
           var mailOptions={
             from: process.env.EMAIL,
             to: email,
-            subject: "Ortmor Agency Email verification",
+            subject: "Ortmor Technology Agency Pvt Ltd Email verification",
             html: `
-            <h1>Verify Your Email For Ortmor Agency</h1>
-              <h3>use this code in Ortmor Agency to verify your email</h3>
+            <h1>Verify Your Email ForOrtmor Technology Agency Pvt Ltd</h1>
+              <h3>use this code inOrtmor Technology Agency Pvt Ltd to verify your email</h3>
               <h2>${otp}</h2>
             `,
           }
