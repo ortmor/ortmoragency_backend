@@ -16,7 +16,6 @@ export async function verifySuperAdmin(req , res , next )  {
         }else { 
         // finding the admin with the decoded id
           const superAdmin = await SuperAdminModel.findById(decoded.id) ;
-  
           if(superAdmin ) {
             // if admin true pass to the next function
             next() ;

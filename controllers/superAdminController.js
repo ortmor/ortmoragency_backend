@@ -1,6 +1,7 @@
 import SuperAdminModel from "../model/superAdminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Admin from "../model/adminModel.js";
 
 
 
@@ -87,4 +88,20 @@ export async function SuperAdminLogin(req , res) {
   
   
    }
+
+
+//ADMIN MNANNAGEMENT
    
+export async function getAllAdmin(req, res) {
+  
+    try {
+      // Finding all Admin with paginated Results
+      const admin =  await Admin.find().skip(req.paginatedResults.startIndex).limit(req.paginatedResults.endIndex)
+      if(admin){
+        res.status(200).json({status : true , admin , pagination :req.paginatedResults})
+      }
+    } catch (error) {
+      res.status(500).json({created : false , message:"Internal Server Error" })
+    }
+  }
+  
