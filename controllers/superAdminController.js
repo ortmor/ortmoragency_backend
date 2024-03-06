@@ -2,6 +2,7 @@ import SuperAdminModel from "../model/superAdminModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Admin from "../model/adminModel.js";
+import Blog from "../model/blogModel.js"
 import { sendNotificationEmail } from "../Helpers/sendEmail.js";
 
 
@@ -187,3 +188,21 @@ export async function blockAdmin (req , res){
     }
   }
   
+  //BLOG MANAGEMENT
+
+  //get blogs
+
+export async function getBlog (req , res) {
+
+    try {
+      
+      // finding All blog and find the title details also by populating
+      const blog = await Blog.find().skip(req.paginatedResults.startIndex).limit(req.paginatedResults.limit).populate('title').lean()
+      if(blog) {
+        res.status(200).json({ status : true , blog , pagination : req.paginatedResults})
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ status : false , message : " Internal Server Error "}) ;
+    }
+  }
