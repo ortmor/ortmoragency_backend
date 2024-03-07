@@ -1,5 +1,5 @@
 import express from "express";
-import { authAdmin,SuperAdminLogin,getAllAdmin,addAdmin,blockAdmin,unBlockAdmin ,getBlog} from "../controllers/superAdminController.js";
+import { authAdmin,SuperAdminLogin,getAllAdmin,addAdmin,blockAdmin,unBlockAdmin ,getBlog,changeBlogStatus} from "../controllers/superAdminController.js";
 import validate from "../middleware/validateBody.js";
 import { loginSchema } from "../Utils/yupSchema.js";
 import paginatedResults from "../middleware/pagination.js";
@@ -26,5 +26,6 @@ router.get("/unblock-Admin/:id" ,validateId , unBlockAdmin);
 
 //Blog Management
 router.get('/get-Blog' ,paginatedResults(),getBlog);
+router.put('/blog/change-status/:id/:status' , validateId , changeBlogStatus) 
 
 export default router;

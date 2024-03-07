@@ -206,3 +206,40 @@ export async function getBlog (req , res) {
       res.status(500).json({ status : false , message : " Internal Server Error "}) ;
     }
   }
+
+  export async function changeBlogStatus (req , res) {
+  
+    try {
+      
+      const blogId = req.params.id
+      const { status } = req.params ;
+  
+      let updatedData = {} ;
+  
+      switch(status) {
+        case 'block' : 
+            updatedData.status = false;
+          break;
+        case 'unblock' : 
+            updatedData.status = true;
+        break ;
+        default : 
+        return res.status(400).json({status : false, message : 'Invalid status'})
+      }
+  
+  
+      const response = await Blog.updateOne({ _id :blogId} , {$set : updatedData})
+      if(response.modifiedCount ===1) {
+        const message = status === 'block' ? 'Blog Blocked Successfully' : 'Blog Unblocked Successfully'
+        return res.status(200).json({ status : true , message })
+      }
+  
+      res.status(404).json({ status : false , message : 'Blog not found'}) ;
+  
+    } catch (error) {
+      res.status(500).json({ status : false , message : 'Internal Server Error'}) ;
+      
+    }
+  
+  }
+  
