@@ -13,7 +13,7 @@ import { loginSchema, signupSchema } from "../Utils/yupSchema.js";
 import validate from "../middleware/validateBody.js";
 import uploadImage from "../middleware/image-upload.js";
 import paginatedResults from "../middleware/pagination.js";
-import { verifyAdminLogin } from '../middleware/adminAuth.js';
+// import { verifyAdminLogin } from '../middleware/adminAuth.js';
 
 const router = express.Router();
   
@@ -29,7 +29,7 @@ router.post("/login", validate(loginSchema), login);
 // router.post("/auth/login/google" , googleAuth)
 
 // Verifyning the Authorization ;
-router.use(verifyAdminLogin)
+// router.use(verifyAdminLogin)
 
 // Change Password
 router.post("/forgot-Password", forgotPassword);

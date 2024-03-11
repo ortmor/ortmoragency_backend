@@ -36,8 +36,7 @@ export function sendEmail (email , otp){
 }
 
 export function sendNotificationEmail (email , password){
-  console.log(email
-    ,"fsdfdfd" , password);
+
 
   return new Promise((resolve, reject)=>{
       let transporter = nodemailer.createTransport({
